@@ -917,6 +917,9 @@ export function scrollToHash () {
   location.hash = hash
 }
 
+var codeMap = {};
+var codeIndex = 0;
+
 function highlightRender (code, lang) {
   if (!lang || /no(-?)highlight|plain|text/.test(lang)) { return }
   code = S(code).escapeHTML().s
@@ -938,7 +941,8 @@ function highlightRender (code, lang) {
     return `<div class="abc raw">${code}</div>`
   } else if (lang === 'source') {
     var showlinenumbers = true;
-    result.block_feature = `<div class='block_feature'><a class="btn btn-info exec_button"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
+    result.block_feature = `<div class="block_feature"><a class="btn btn-info exec_button" data-code-index="${codeIndex}"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
+    codeMap[codeIndex++] = code;
   } else {
     var showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
   }
