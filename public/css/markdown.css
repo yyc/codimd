@@ -29,6 +29,12 @@
     display: inline-flex;
 }
 
+.markdown-body pre code .block_feature {
+    display: block;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
 .markdown-body pre code .gutter {
     float: left;
     overflow: hidden;

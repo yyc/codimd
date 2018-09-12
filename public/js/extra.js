@@ -920,6 +920,12 @@ export function scrollToHash () {
 function highlightRender (code, lang) {
   if (!lang || /no(-?)highlight|plain|text/.test(lang)) { return }
   code = S(code).escapeHTML().s
+
+  const result = {
+    value: code,
+    block_feature: ''
+  }
+
   if (lang === 'sequence') {
     return `<div class="sequence-diagram raw">${code}</div>`
   } else if (lang === 'flow') {
@@ -930,11 +936,12 @@ function highlightRender (code, lang) {
     return `<div class="mermaid raw">${code}</div>`
   } else if (lang === 'abc') {
     return `<div class="abc raw">${code}</div>`
+  } else if (lang === 'source') {
+    var showlinenumbers = true;
+    result.block_feature = `<div class='block_feature'><a class="btn btn-info exec_button"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
+  } else {
+    var showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
   }
-  const result = {
-    value: code
-  }
-  const showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
   if (showlinenumbers) {
     let startnumber = 1
     const matches = lang.match(/=(\d+)$/)
@@ -946,7 +953,7 @@ function highlightRender (code, lang) {
     }
     const continuelinenumber = /=\+$/.test(lang)
     const linegutter = `<div class='gutter linenumber${continuelinenumber ? ' continue' : ''}'>${linenumbers.join('\n')}</div>`
-    result.value = `<div class='wrapper'>${linegutter}<div class='code'>${result.value}</div></div>`
+    result.value = `${result.block_feature}<div class='wrapper'>${linegutter}<div class='code'>${result.value}</div></div>`
   }
   return result.value
 }
