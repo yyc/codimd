@@ -479,6 +479,9 @@ $(document).ready(function () {
   $(document).on('click', '.toggle-dropdown .dropdown-menu', function (e) {
     e.stopPropagation()
   })
+
+  // Register source->javascript
+  CodeMirror.defineMode('source', CodeMirror.modes['javascript'])
 })
 // when page resize
 $(window).resize(function () {
