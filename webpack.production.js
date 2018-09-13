@@ -6,6 +6,7 @@ var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 var ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 
 module.exports = [Object.assign({}, baseConfig, {
+  devtool: 'source-map',
   plugins: baseConfig.plugins.concat([
     new webpack.DefinePlugin({
       'process.env': {
