@@ -18,33 +18,33 @@ window.source_runtime.context = (() => {
   display.__SOURCE__ = "display(a)";
 
   function cadetPrompt(any) {
-    return prompt(toString(value))
+    return prompt(toString(value));
   }
-  cadetPrompt.__SOURCE__ = 'prompt(a)'
+  cadetPrompt.__SOURCE__ = "prompt(a)";
 
   function cadetAlert(value) {
-    alert(toString(value))
+    alert(toString(value));
   }
-  cadetAlert.__SOURCE__ = 'alert(a)'
+  cadetAlert.__SOURCE__ = "alert(a)";
 
   function visualiseList(list) {
     if (window.ListVisualizer) {
-      window.ListVisualizer.draw(list)
+      window.ListVisualizer.draw(list);
     } else {
       return list;
     }
   }
-  visualiseList.__SOURCE__ = 'draw_list(a)'
+  visualiseList.__SOURCE__ = "draw_list(a)";
 
   const externalBuiltIns = {
     display,
     prompt: cadetPrompt,
     alert: cadetAlert,
     visualiseList
-  }
+  };
 
-   return createContext(3, [], null, externalBuiltIns);
-})()
+  return createContext(3, [], null, externalBuiltIns);
+})();
 
 export function clearCodeMap() {
   window.source_runtime.codeMap = {};
