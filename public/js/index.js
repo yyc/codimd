@@ -60,6 +60,10 @@ import {
 } from './extra'
 
 import {
+  addCodeHandlers
+} from './source'
+
+import {
     clearMap,
     setupSyncAreas,
     syncScrollToEdit,
@@ -2776,6 +2780,7 @@ function updateViewInner () {
     var result = postProcess(rendered).children().toArray()
     partialUpdate(result, lastResult, ui.area.markdown.children().toArray())
     if (result && lastResult && result.length !== lastResult.length) { updateDataAttrs(result, ui.area.markdown.children().toArray()) }
+    addCodeHandlers();
     lastResult = $(result).clone()
   }
   removeDOMEvents(ui.area.markdown)

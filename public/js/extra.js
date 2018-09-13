@@ -16,6 +16,8 @@ import PDFObject from 'pdfobject'
 import S from 'string'
 import { saveAs } from 'file-saver'
 
+import { registerCode, clearCodeMap, addCodeHandlers } from './source'
+
 require('./lib/common/login')
 require('../vendor/md-toc')
 var Viz = require('viz.js')
@@ -917,12 +919,9 @@ export function scrollToHash () {
   location.hash = hash
 }
 
-var codeMap = {};
-var codeIndex = 0;
-
-function highlightRender (code, lang) {
+function highlightRender (plain_code, lang) {
   if (!lang || /no(-?)highlight|plain|text/.test(lang)) { return }
-  code = S(code).escapeHTML().s
+  const code = S(plain_code).escapeHTML().s
 
   const result = {
     value: code,
@@ -941,8 +940,8 @@ function highlightRender (code, lang) {
     return `<div class="abc raw">${code}</div>`
   } else if (lang === 'source') {
     var showlinenumbers = true;
-    result.block_feature = `<div class="block_feature"><a class="btn btn-info exec_button" data-code-index="${codeIndex}"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
-    codeMap[codeIndex++] = code;
+    const index = registerCode(plain_code);
+    result.block_feature = `<div class="block_feature"><a class="btn btn-info exec_button" data-code-index="${index}"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
   } else {
     var showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
   }

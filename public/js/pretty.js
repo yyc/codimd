@@ -20,7 +20,11 @@ import {
     scrollToHash,
     smoothHashScroll,
     updateLastChange
-} from './extra'
+  } from './extra'
+
+import {
+  addCodeHandlers
+} from './source'
 
 import { preventXSS } from './render'
 
@@ -55,6 +59,7 @@ if (md.meta.type && md.meta.type === 'slide') {
   rendered = preventXSS(rendered)
   const result = postProcess(rendered)
   markdown.html(result.html())
+  addCodeHandlers();
 }
 $(document.body).show()
 
