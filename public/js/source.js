@@ -10,7 +10,7 @@ window.source_runtime = {
   displays: []
 };
 
-window.source_runtime.context = (() => {
+function new_context() {
   // Define our builtins as in cadet-frontend/src/utils/slangHelper
   function display(t) {
     window.source_runtime.displays.push(toString(t));
@@ -44,7 +44,8 @@ window.source_runtime.context = (() => {
   };
 
   return createContext(3, [], null, externalBuiltIns);
-})();
+}
+window.source_runtime.context = new_context();
 
 export function clearCodeMap() {
   window.source_runtime.codeMap = {};
@@ -58,10 +59,7 @@ export function registerCode(code) {
 
 export function execButton(codeIndex, button) {
   const code = window.source_runtime.codeMap[codeIndex];
-  const result = runInContext(
-    code,
-    window.source_runtime.context
-  ).then(result => {
+  return runInContext(code, window.source_runtime.context).then(result => {
     if (result.status == "error") {
       appendResult(parseErrors(window.source_runtime.context.errors), button);
     } else if (result.status == "finished") {
@@ -69,22 +67,59 @@ export function execButton(codeIndex, button) {
       appendResult(window.source_runtime.displays, button);
     }
     window.source_runtime.displays = [];
+    return Promise.resolve();
   });
 }
 // Result: array of strings
 function appendResult(result, button) {
-  const resultsPane = $(button).parent().siblings('.results');
-  resultsPane.children('code').html(result.join('\n'));
+  const resultsPane = $(button).parent().siblings(".results");
+  resultsPane.children("code").html(result.join("\n"));
   resultsPane.slideDown();
 }
 
 function parseErrors(errors) {
   return errors.map(error => {
-    const line = error.location ? error.location.start.line : '<unknown>'
-    const explanation = error.explain()
-    return `<span class='error'>Line ${line}: ${explanation}</span>`
+    const line = error.location ? error.location.start.line : "<unknown>";
+    const explanation = error.explain();
+    return `<span class='error'>Line ${line}: ${explanation}</span>`;
   });
 }
+
+function runAll() {
+  clearAll();
+  const buttons = $(".exec_button").toArray();
+  forEachPromise(
+    btn => execButton($(btn).attr("data-code-index"), btn),
+    buttons
+  );
+}
+
+// waits for each promise to finish before running the next one
+function forEachPromise(fn, ary) {
+  function helper(i) {
+    // console.log(`starting ${i}`)
+    if (i == ary.length) {
+      return;
+    } else {
+      fn(ary[i]).then((res) => {
+        // console.log(`finish ${i}`)
+        helper(i + 1)
+      });
+    }
+  }
+  helper(0);
+}
+
+function clearAll() {
+  $(".markdown-body pre code .results").hide();
+  window.source_runtime.context = new_context();
+}
+
+export function addHeaderHandler() {
+  $(".run-all").click(runAll);
+  $(".reset-env").click(clearAll);
+}
+addHeaderHandler();
 
 export function addCodeHandlers() {
   $(".exec_button").each(function(index, button) {
