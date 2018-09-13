@@ -63,11 +63,26 @@ export function execButton(codeIndex, button) {
     window.source_runtime.context
   ).then(result => {
     if (result.status == "error") {
-      console.log(window.source_runtime.context.errors);
+      appendResult(parseErrors(window.source_runtime.context.errors), button);
     } else if (result.status == "finished") {
-      console.log("logged", window.source_runtime.displays);
-      console.log("finished running with value", result.value);
+      window.source_runtime.displays.push(toString(result.value));
+      appendResult(window.source_runtime.displays, button);
     }
+    window.source_runtime.displays = [];
+  });
+}
+// Result: array of strings
+function appendResult(result, button) {
+  const resultsPane = $(button).parent().siblings('.results');
+  resultsPane.children('code').html(result.join('\n'));
+  resultsPane.slideDown();
+}
+
+function parseErrors(errors) {
+  return errors.map(error => {
+    const line = error.location ? error.location.start.line : '<unknown>'
+    const explanation = error.explain()
+    return `<span class='error'>Line ${line}: ${explanation}</span>`
   });
 }
 

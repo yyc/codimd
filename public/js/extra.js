@@ -927,7 +927,8 @@ function highlightRender (plain_code, lang) {
 
   const result = {
     value: code,
-    block_feature: ''
+    block_feature: '',
+    block_tail: ''
   }
 
   if (lang === 'sequence') {
@@ -944,6 +945,7 @@ function highlightRender (plain_code, lang) {
     var showlinenumbers = true;
     const index = registerCode(plain_code);
     result.block_feature = `<div class="block_feature"><a class="btn btn-info exec_button" data-code-index="${index}"><span class="glyphicon glyphicon-play"></span> Run</a></div>`
+    result.block_tail = '<div class="results">Results:\n<code></code></div>'
   } else {
     var showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
   }
@@ -958,9 +960,9 @@ function highlightRender (plain_code, lang) {
     }
     const continuelinenumber = /=\+$/.test(lang)
     const linegutter = `<div class='gutter linenumber${continuelinenumber ? ' continue' : ''}'>${linenumbers.join('\n')}</div>`
-    result.value = `${result.block_feature}<div class='wrapper'>${linegutter}<div class='code'>${result.value}</div></div>`
+    result.value = `<div class='wrapper'>${linegutter}<div class='code'>${result.value}</div></div>`
   }
-  return result.value
+  return `${result.block_feature}${result.value}${result.block_tail}`
 }
 
 import markdownit from 'markdown-it'
