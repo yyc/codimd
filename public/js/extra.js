@@ -532,7 +532,10 @@ export function finishView (view) {
             } else {
               code = S(code).unescapeHTML().s
               const languages = hljs.listLanguages()
-              if (!languages.includes(reallang)) {
+              // Add source -> javascript proxy
+              if(reallang === 'source') {
+                result = hljs.highlight('javascript', code)
+              } else if (!languages.includes(reallang)) {
                 result = hljs.highlightAuto(code)
               } else {
                 result = hljs.highlight(reallang, code)
@@ -685,7 +688,6 @@ export function exportToHTML (view) {
         dir: (md && md.meta && md.meta.dir) ? `dir="${md.meta.dir}"` : null
       }
       const html = template(context)
-            //        console.log(html);
       const blob = new Blob([html], {
         type: 'text/html;charset=utf-8'
       })
