@@ -57,8 +57,11 @@ export function registerCode(code) {
   return window.source_runtime.codeIndex++;
 }
 
-export function execButton(codeIndex, button) {
+export function execButton(codeIndex, button, reset_env = false) {
   const code = window.source_runtime.codeMap[codeIndex];
+  if(reset_env) {
+    clearAll();
+  }
   return runInContext(code, window.source_runtime.context).then(result => {
     if (result.status == "error") {
       appendResult(parseErrors(window.source_runtime.context.errors), button);
@@ -72,9 +75,9 @@ export function execButton(codeIndex, button) {
 }
 // Result: array of strings
 function appendResult(result, button) {
-  const resultsPane = $(button).parent().siblings(".results");
+  const resultsPane = $(button).parents('.block_feature').siblings(".results");
   resultsPane.children("code").html(result.join("\n"));
-  resultsPane.slideDown();
+  resultsPane.show();
 }
 
 function parseErrors(errors) {
@@ -89,7 +92,7 @@ function runAll() {
   clearAll();
   const buttons = $(".exec_button").toArray();
   forEachPromise(
-    btn => execButton($(btn).attr("data-code-index"), btn),
+    btn => execButton($(btn).parent().attr("data-code-index"), btn),
     buttons
   );
 }
@@ -97,12 +100,10 @@ function runAll() {
 // waits for each promise to finish before running the next one
 function forEachPromise(fn, ary) {
   function helper(i) {
-    // console.log(`starting ${i}`)
     if (i == ary.length) {
       return;
     } else {
       fn(ary[i]).then((res) => {
-        // console.log(`finish ${i}`)
         helper(i + 1)
       });
     }
@@ -122,10 +123,14 @@ export function addHeaderHandler() {
 addHeaderHandler();
 
 export function addCodeHandlers() {
-  $(".exec_button").each(function(index, button) {
-    const codeIndex = $(button).attr("data-code-index");
-    $(button).click(function(e) {
-      execButton(codeIndex, button);
+  function addHandler(buttonSelector,reset_context) {
+    $(buttonSelector).each(function(index, button) {
+      const codeIndex = $(button).parent().attr("data-code-index");
+      $(button).click(function(e) {
+        execButton(codeIndex, button, reset_context);
+      });
     });
-  });
+  }
+  addHandler('.exec_button', true);
+  addHandler('.eval_button', false);
 }
