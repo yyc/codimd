@@ -6,6 +6,7 @@ import { Value } from "js-slang/dist/types";
 
 window.source_runtime = {
   codeMap: {},
+  codeIds: {},
   codeIndex: 0,
   displays: []
 };
@@ -53,12 +54,17 @@ export function clearCodeMap() {
 }
 
 export function registerCode(code) {
+  if(window.source_runtime.codeIds[code]) {
+    return window.source_runtime.codeIds[code];
+  }
+  window.source_runtime.codeIds[code] = window.source_runtime.codeIndex;
   window.source_runtime.codeMap[window.source_runtime.codeIndex] = code;
   return window.source_runtime.codeIndex++;
 }
 
 export function execButton(codeIndex, button, reset_env = false) {
   const code = window.source_runtime.codeMap[codeIndex];
+  console.log(code, codeIndex);
   if(reset_env) {
     clearAll();
   }
@@ -126,7 +132,7 @@ export function addCodeHandlers() {
   function addHandler(buttonSelector,reset_context) {
     $(buttonSelector).each(function(index, button) {
       const codeIndex = $(button).parent().attr("data-code-index");
-      $(button).click(function(e) {
+      $(button).unbind('click').click(function(e) {
         execButton(codeIndex, button, reset_context);
       });
     });
