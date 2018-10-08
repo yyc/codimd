@@ -70,11 +70,11 @@ export function execButton(codeIndex, button, reset_env = false) {
   }
   return runInContext(code, window.source_runtime.context).then(result => {
     if (result.status == "error") {
-      appendResult(parseErrors(window.source_runtime.context.errors), button);
+      window.source_runtime.displays.push(parseErrors(window.source_runtime.context.errors));
     } else if (result.status == "finished") {
       window.source_runtime.displays.push(toString(result.value));
-      appendResult(window.source_runtime.displays, button);
     }
+    appendResult(window.source_runtime.displays, button);
     window.source_runtime.displays = [];
     return Promise.resolve();
   });
