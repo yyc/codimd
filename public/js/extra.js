@@ -944,7 +944,7 @@ function highlightRender (plain_code, lang) {
   } else if (lang === 'source') {
     var showlinenumbers = true;
     const index = registerCode(plain_code);
-    result.block_feature = `<div class="block_feature"><div class="btn-group" data-code-index="${index}"><a class="btn btn-info exec_button"><span class="glyphicon glyphicon-play"></span> Run</a> <a class="btn btn-warning eval_button"><span class="glyphicon glyphicon-console"></span>Evaluate</a></div></div>`
+    result.block_feature = `<div class="block_feature"><div class="btn-group" data-code-index="${index}"><a class="btn btn-info exec_button"><span class="glyphicon glyphicon-play"></span> Run</a> <a class="btn btn-warning eval_button"><span class="glyphicon glyphicon-console"></span> Evaluate</a></div></div>`
     result.block_tail = '<div class="results">Results:\n<code></code></div>'
   } else {
     var showlinenumbers = /=$|=\d+$|=\+$/.test(lang)
